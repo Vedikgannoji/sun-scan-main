@@ -43,6 +43,10 @@ const Estimate = () => {
 
   const handleClearDrawing = () => {
     (window as any).mapControls?.clearDrawing();
+    setProjectType("");
+    setOrientation("");
+    setInstallationArea("");
+    setMeasuredArea(0);
   };
 
   useEffect(() => {
