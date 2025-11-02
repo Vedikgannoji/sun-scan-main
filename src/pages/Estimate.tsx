@@ -13,12 +13,12 @@ import Map from "@/components/Map";
 const Estimate = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [latitude, setLatitude] = useState("28.6139");
-  const [longitude, setLongitude] = useState("77.209");
-  const [projectType, setProjectType] = useState("commercial");
-  const [installationArea, setInstallationArea] = useState("500");
-  const [tiltAngle, setTiltAngle] = useState([30]);
-  const [orientation, setOrientation] = useState("south");
+  const [latitude, setLatitude] = useState("20.5937");
+  const [longitude, setLongitude] = useState("78.9629");
+  const [projectType, setProjectType] = useState("");
+  const [installationArea, setInstallationArea] = useState("");
+  const [tiltAngle, setTiltAngle] = useState([10]);
+  const [orientation, setOrientation] = useState("");
   const [panelEfficiency, setPanelEfficiency] = useState([20]);
   const [measuredArea, setMeasuredArea] = useState(0);
 
@@ -47,6 +47,19 @@ const Estimate = () => {
         navigate("/auth");
       } else {
         setLoading(false);
+        
+        // Get user's current location
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              setLatitude(position.coords.latitude.toFixed(6));
+              setLongitude(position.coords.longitude.toFixed(6));
+            },
+            (error) => {
+              console.log("Location access denied, using default India center");
+            }
+          );
+        }
       }
     });
   }, [navigate]);
@@ -187,7 +200,7 @@ const Estimate = () => {
                 </Label>
                 <Select value={projectType} onValueChange={setProjectType}>
                   <SelectTrigger id="projectType">
-                    <SelectValue />
+                    <SelectValue placeholder="Choose project type..." />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="residential">Residential (1-10 kW)</SelectItem>
@@ -242,7 +255,7 @@ const Estimate = () => {
                 </Label>
                 <Select value={orientation} onValueChange={setOrientation}>
                   <SelectTrigger id="orientation">
-                    <SelectValue />
+                    <SelectValue placeholder="Choose orientation..." />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="north">North</SelectItem>

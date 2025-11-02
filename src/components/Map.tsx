@@ -63,12 +63,7 @@ const Map = ({ latitude, longitude, onCoordinatesChange, onAreaChange }: MapProp
         circle: false,
         circlemarker: false,
         marker: false,
-        rectangle: {
-          shapeOptions: {
-            color: "#3b82f6",
-            fillOpacity: 0.3,
-          },
-        },
+        rectangle: false,
       },
       edit: {
         featureGroup: drawnItems,
@@ -84,7 +79,7 @@ const Map = ({ latitude, longitude, onCoordinatesChange, onAreaChange }: MapProp
       drawnItems.addLayer(layer);
 
       // Calculate area in square meters
-      if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
+      if (layer instanceof L.Polygon) {
         const latLngs = layer.getLatLngs();
         const coords = Array.isArray(latLngs[0]) ? latLngs[0] : latLngs;
         const area = L.GeometryUtil.geodesicArea(coords as L.LatLng[]);
@@ -96,7 +91,7 @@ const Map = ({ latitude, longitude, onCoordinatesChange, onAreaChange }: MapProp
     map.on(L.Draw.Event.EDITED, (e: any) => {
       const layers = e.layers;
       layers.eachLayer((layer: any) => {
-        if (layer instanceof L.Polygon || layer instanceof L.Rectangle) {
+        if (layer instanceof L.Polygon) {
           const latLngs = layer.getLatLngs();
           const coords = Array.isArray(latLngs[0]) ? latLngs[0] : latLngs;
           const area = L.GeometryUtil.geodesicArea(coords as L.LatLng[]);
