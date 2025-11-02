@@ -9,6 +9,9 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Map as MapIcon, Settings, LogOut } from "lucide-react";
 import Map from "@/components/Map";
+import { calculateSolarPotential, SolarCalculationResults } from "@/lib/solarCalculations";
+import { SolarDashboard } from "@/components/dashboard/SolarDashboard";
+import { toast } from "sonner";
 
 const Estimate = () => {
   const navigate = useNavigate();
@@ -21,6 +24,8 @@ const Estimate = () => {
   const [orientation, setOrientation] = useState("");
   const [panelEfficiency, setPanelEfficiency] = useState([20]);
   const [measuredArea, setMeasuredArea] = useState(0);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [calculationResults, setCalculationResults] = useState<SolarCalculationResults | null>(null);
 
   const handleCoordinatesChange = (lat: number, lng: number) => {
     setLatitude(lat.toFixed(6));
@@ -70,16 +75,45 @@ const Estimate = () => {
   };
 
   const handleCalculate = () => {
-    // Placeholder for calculation logic
-    console.log("Calculate Solar Potential", {
-      latitude,
-      longitude,
+    // Validation
+    if (!projectType) {
+      toast.error("Please select a project type");
+      return;
+    }
+    if (!installationArea || parseFloat(installationArea) <= 0) {
+      toast.error("Please draw a polygon on the map to calculate area");
+      return;
+    }
+    if (!orientation) {
+      toast.error("Please select an orientation");
+      return;
+    }
+
+    // Perform calculation
+    const results = calculateSolarPotential({
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
       projectType,
-      installationArea,
+      installationArea: parseFloat(installationArea),
       tiltAngle: tiltAngle[0],
       orientation,
-      panelEfficiency: panelEfficiency[0]
+      panelEfficiency: panelEfficiency[0],
     });
+
+    setCalculationResults(results);
+    setShowDashboard(true);
+    toast.success("Solar potential calculated successfully!");
+
+    // Scroll to results
+    setTimeout(() => {
+      document.getElementById("solar-dashboard")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
+
+  const handleRecalculate = () => {
+    setShowDashboard(false);
+    setCalculationResults(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (loading) {
@@ -108,7 +142,8 @@ const Estimate = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-6 py-8">
-        <div className="grid lg:grid-cols-2 gap-6">
+        {!showDashboard ? (
+          <div className="grid lg:grid-cols-2 gap-6">
           {/* Area Measurement Tool */}
           <Card>
             <CardHeader>
@@ -291,6 +326,19 @@ const Estimate = () => {
             </CardContent>
           </Card>
         </div>
+        ) : (
+          <div id="solar-dashboard">
+            <SolarDashboard
+              results={calculationResults!}
+              inputs={{
+                tiltAngle: tiltAngle[0],
+                orientation,
+                panelEfficiency: panelEfficiency[0],
+              }}
+              onRecalculate={handleRecalculate}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
