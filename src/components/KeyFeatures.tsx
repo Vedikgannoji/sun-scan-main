@@ -27,7 +27,7 @@ const features = [
 
 const KeyFeatures = () => {
   return (
-    <section className="py-24 px-6 bg-muted/30">
+    <section id="features" className="py-24 px-6 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
