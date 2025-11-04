@@ -135,7 +135,7 @@ const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose, showFloatin
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)]"
+            className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)]"
           >
             <Card className="shadow-medium">
               <div className="bg-primary text-primary-foreground p-4 rounded-t-xl flex items-center justify-between">
