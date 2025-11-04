@@ -3,8 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
 import heroImage from "@/assets/hero-solar-farm.jpg";
+import Chatbot from "@/components/Chatbot";
+import { useState } from "react";
 
 const Hero = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden">
       <div 
@@ -53,11 +57,17 @@ const Hero = () => {
         transition={{ duration: 0.8, delay: 0.6 }}
         className="absolute bottom-8 left-0 right-0 z-20 flex justify-center"
       >
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 flex items-center gap-3 shadow-medium">
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-3 flex items-center gap-3 shadow-medium hover:bg-white/20 transition-all cursor-pointer"
+        >
           <MessageCircle className="w-5 h-5 text-white" />
           <span className="text-white font-medium">Ask SolarBot a Question</span>
-        </div>
+        </button>
       </motion.div>
+
+      {/* Chatbot Component */}
+      <Chatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} showFloatingButton={false} />
     </section>
   );
 };

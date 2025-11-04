@@ -8,8 +8,16 @@ import { useToast } from "@/hooks/use-toast";
 
 type Message = { text: string; sender: "user" | "bot" };
 
-const Chatbot = () => {
-  const [isOpen, setIsOpen] = useState(false);
+interface ChatbotProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  showFloatingButton?: boolean;
+}
+
+const Chatbot = ({ isOpen: externalIsOpen, onClose: externalOnClose, showFloatingButton = true }: ChatbotProps = {}) => {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = externalOnClose !== undefined ? externalOnClose : setInternalIsOpen;
   const [messages, setMessages] = useState<Message[]>([
     { text: "Hi! I'm SolarBot. Ask me anything about solar energy!", sender: "bot" }
   ]);
@@ -178,14 +186,22 @@ const Chatbot = () => {
         )}
       </AnimatePresence>
 
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 bg-primary text-primary-foreground w-14 h-14 rounded-full shadow-medium flex items-center justify-center"
-      >
-        <MessageCircle className="w-6 h-6" />
-      </motion.button>
+      {showFloatingButton && (
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            if (externalIsOpen !== undefined && externalOnClose) {
+              externalOnClose();
+            } else {
+              setInternalIsOpen(!internalIsOpen);
+            }
+          }}
+          className="fixed bottom-6 right-6 z-50 bg-primary text-primary-foreground w-14 h-14 rounded-full shadow-medium flex items-center justify-center"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </motion.button>
+      )}
     </>
   );
 };
